@@ -1,41 +1,29 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {error} from "@angular/compiler-cli/src/transformers/util";
 import {CustomerService} from "../services/customer.service";
 import {catchError, map, Observable, throwError} from "rxjs";
-import {Customer} from "../model/customze.model";
+import {Customer} from "../model/customer.model";
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-customers',
   templateUrl: './customers.component.html',
-  styleUrl: './customers.component.css'
+  styleUrls: ['./customers.component.css']
 })
-export class CustomersComponent  implements OnInit{
- customers! :Observable<Array<Customer>>;
- errorMessage! : string;
- searchFormGroup! : FormGroup | undefined;
-  constructor(private customerService:CustomerService,private fb: FormBuilder,private router :Router) {
-  }
+export class CustomersComponent implements OnInit {
+  customers! : Observable<Array<Customer>>;
+  errorMessage!: string;
+  searchFormGroup : FormGroup | undefined;
+  constructor(private customerService : CustomerService, private fb : FormBuilder, private router : Router) { }
 
   ngOnInit(): void {
-      /*this.customerService.getCustomers().subscribe({
-        next : (data)=>{
-          this.customers=data;
-        },
-        error:(err)=>{
-          this.errorMessage=err.message;
-        }
-      })*/
     this.searchFormGroup=this.fb.group({
-      keyword: this.fb.control("")
+      keyword : this.fb.control("")
     });
-    this.handleSearchcustomers();
+    this.handleSearchCustomers();
   }
-
-
-  handleSearchcustomers() {
+  handleSearchCustomers() {
     let kw=this.searchFormGroup?.value.keyword;
     this.customers=this.customerService.searchCustomers(kw).pipe(
       catchError(err => {
@@ -64,8 +52,7 @@ export class CustomersComponent  implements OnInit{
     })
   }
 
-  handleCustomerAccounts(c: Customer) {
-
-
+  handleCustomerAccounts(customer: Customer) {
+    this.router.navigateByUrl("/customer-accounts/"+customer.id,{state :customer});
   }
 }
